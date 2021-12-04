@@ -23,48 +23,7 @@ class adminController extends Controller
     public function login(){
         return view("admin.loginSignUp",["healthcares"=>HC::all()]);
     }
-    public function postSignUp(Request $req){
-        $data = $req->validate([
-            "username"=>"required",
-            "password"=>"required",
-            "email"=>"required",
-            "fullname"=>"required",
-            "healthcare_id"=>"required"
-        ]);
-        $user = User::create([
-            "username"=>$data["username"],
-            "password"=>bcrypt($data["password"]),
-            "email"=>$data["email"],
-            "fullname"=>$data["fullname"],
-            "role"=>"admin"
-        ]);
-        $admin = Admin::create([
-            "staffid"=>rand(),
-            "healthcare_id"=>$data["healthcare_id"],
-            "user_id"=>$user->id
-        ]);
-        return redirect("/admin")->withSucces("Registration Success!");
-    }
-
-    public function postLogin(Request $req){
-        $data = $req->validate([
-            "username"=>"required",
-            "password"=>"required"
-        ]);
-        $user = User::where("username",$data["username"])->whereOr("email",$data["username"])->where("role","admin")->first();
-        if($user)
-        if(Hash::check($data["password"], $user->password)){
-            Session::put([
-                "login_admin"=>true,
-                "user_id"=>$user->id,
-                "user_fullname"=>$user->fullname,
-                "healthcare_id"=>$user->admin->healthcare->id
-            ]);
-            return redirect("/admin");
-        }
-        return redirect("/admin")->withErrors(["Username or Password is incorrect!"]);
-    }
-
+    
     public function addBatch(Request $req){
         $data = $req->validate([
             "vaccine_id"=>"required",
